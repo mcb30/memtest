@@ -17,7 +17,7 @@ OBJS= head.o reloc.o main.o test.o init.o lib.o patn.o screen_buffer.o \
       config.o linuxbios.o memsize.o pci.o controller.o random.o spd.o \
       error.o dmi.o cpuid.o
 
-all: memtest.bin memtest
+all: memtest.bin memtest memtest.0
 
 # Link it statically once so I know I don't have undefined
 # symbols and then link it dynamically so I have full
@@ -42,9 +42,16 @@ bootsect.s: bootsect.S config.h defs.h
 setup.s: setup.S config.h defs.h
 	$(CC) -E -traditional $< -o $@
 
+pxe.s: pxe.S config.h defs.h
+	$(CC) -E -traditional $< -o $@
+
 memtest.bin: memtest_shared.bin bootsect.o setup.o memtest.bin.lds
 	$(LD) -T memtest.bin.lds bootsect.o setup.o -b binary \
 	memtest_shared.bin -o memtest.bin
+
+memtest.0: memtest_shared.bin pxe.o setup.o memtest.bin.lds
+	$(LD) -T memtest.bin.lds pxe.o setup.o -b binary \
+	memtest_shared.bin -o memtest.0
 
 reloc.o: reloc.c
 	$(CC) -c $(CFLAGS) -fno-strict-aliasing reloc.c
@@ -53,7 +60,7 @@ test.o: test.c
 	$(CC) -c -Wall -march=i486 -m32 -Os -fomit-frame-pointer -fno-builtin -ffreestanding test.c
 
 clean:
-	rm -f *.o *.s *.iso memtest.bin memtest memtest_shared memtest_shared.bin
+	rm -f *.o *.s *.iso memtest.bin memtest memtest_shared memtest_shared.bin memtest.0
 
 asm:
 	@./makedos.sh
