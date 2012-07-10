@@ -104,6 +104,7 @@ typedef unsigned long ulong;
 int memcmp(const void *s1, const void *s2, ulong count);
 int strncmp(const char *s1, const char *s2, ulong n);
 void *memmove(void *dest, const void *src, ulong n);
+unsigned long simple_strtoul(const char *cp, char **endp, unsigned int base);
 int query_linuxbios(void);
 int query_pcbios(void);
 int insertaddress(ulong);
@@ -349,6 +350,7 @@ struct vars {
 	ulong selected_pages;
 	ulong reserved_pages;
 	int exit;
+	int max_passes;
 };
 
 #define FIRMWARE_UNKNOWN   0

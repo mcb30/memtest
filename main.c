@@ -174,6 +174,11 @@ static void parse_command_line(void)
 			serial_console_setup(cmdline);
 		}
 
+		if (!strncmp(cmdline, "passes=", 7)) {
+			cmdline += 7;
+			v->max_passes = simple_strtoul(cmdline,&cmdline,10);
+		}
+
 		/* go to the next parameter */
 		while (*cmdline && *cmdline != ' ')
 			cmdline++;
@@ -523,6 +528,8 @@ void do_test(void)
 					beep(2000);
 				}
 			}
+			if (v->max_passes && v->pass >= v->max_passes)
+				v->exit = 1;
 		}
 		
 		/* We always start a pass with the low copy */
