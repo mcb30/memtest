@@ -116,7 +116,7 @@ static void __run_at(unsigned long addr)
 }
 
 static unsigned long run_at_addr = 0xffffffff;
-static void run_at(unsigned long addr)
+void run_at(unsigned long addr)
 {
 	unsigned long start;
 	unsigned long len;
@@ -214,6 +214,19 @@ void do_test(void)
 		firsttime = 1;
 	}
 	bail = 0;
+
+	/* Exit if testing has finished */
+	if (v->exit) {
+		paging_off();
+		set_cache(1);
+		if (v->ecount) {
+			exit(EXIT_FAILURE);
+		} else if (v->pass) {
+			exit(EXIT_SUCCESS);
+		} else {
+			exit(EXIT_INCOMPLETE);
+		}
+	}
 
 	/* Find the memory areas I am going to test */
 	compute_segments(window);

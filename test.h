@@ -168,6 +168,7 @@ int get_key(void);
 int ascii_to_keycode(int in);
 void wait_keyup(void);
 void print_hdr(void);
+void run_at(unsigned long addr);
 void restart(void);
 void parity_err(ulong edi, ulong esi);
 void start_config(void);
@@ -180,6 +181,7 @@ void *emapping(unsigned long page_address);
 unsigned long page_of(void *ptr);
 ulong memspeed(ulong src, ulong len, int iter, int type);
 ulong correct_tsc(ulong el_org);
+void exit(int status);
 
 #define PRINTMODE_SUMMARY   1
 #define PRINTMODE_ADDRESSES 0
@@ -346,6 +348,7 @@ struct vars {
 	ulong test_pages;
 	ulong selected_pages;
 	ulong reserved_pages;
+	int exit;
 };
 
 #define FIRMWARE_UNKNOWN   0
@@ -362,6 +365,11 @@ extern struct mem_info_t mem_info;
 #define CPM_SINGLE 1
 #define CPM_RROBIN 2
 #define CPM_SEQ    3
+
+/* Exit codes */
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
+#define EXIT_INCOMPLETE 2
 
 #endif /* __ASSEMBLY__ */
 #endif /* _TEST_H_ */

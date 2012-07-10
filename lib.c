@@ -606,10 +606,8 @@ void check_input(void)
 		case 1:
 			/* "ESC" key was pressed, bail out.  */
 			cprint(LINE_RANGE, COL_MID+23, "Halting... ");
-
-			/* tell the BIOS to do a warm start */
-			*((unsigned short *)0x472) = 0x1234;
-			outb(0xfe,0x64);
+			v->exit = 1;
+			run_at(LOW_TEST_ADR);
 			break;
 		case 46:
 			/* c - Configure */
