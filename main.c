@@ -143,19 +143,26 @@ void run_at(unsigned long addr)
 #define OLD_CL_MAGIC_ADDR ((unsigned short*) MK_PTR(INITSEG,0x20))
 #define OLD_CL_MAGIC 0xA33F 
 #define OLD_CL_OFFSET_ADDR ((unsigned short*) MK_PTR(INITSEG,0x22))
+#define PXE_CL_MAGIC_ADDR ((unsigned short*) MK_PTR(BOOTSEG,0x20))
+#define PXE_CL_OFFSET_ADDR ((unsigned short*) MK_PTR(BOOTSEG,0x22))
 
 static void parse_command_line(void)
 {
 	char *cmdline;
+	unsigned short offset;
 
 	if (cmdline_parsed)
 		return;
 
-	if (*OLD_CL_MAGIC_ADDR != OLD_CL_MAGIC)
+	if (*OLD_CL_MAGIC_ADDR == OLD_CL_MAGIC) {
+		offset = *OLD_CL_OFFSET_ADDR;
+		cmdline = MK_PTR(INITSEG, offset);
+	} else if (*PXE_CL_MAGIC_ADDR == OLD_CL_MAGIC) {
+		offset = *PXE_CL_OFFSET_ADDR;
+		cmdline = MK_PTR(BOOTSEG, offset);
+	} else {
 		return;
-
-	unsigned short offset = *OLD_CL_OFFSET_ADDR;
-	cmdline = MK_PTR(INITSEG, offset);
+	}
 
 	/* skip leading spaces */
 	while (*cmdline == ' ')
